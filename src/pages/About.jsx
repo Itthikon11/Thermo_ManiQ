@@ -91,6 +91,31 @@ export default function About() {
             โดยมีทีมงานวิศวกรผู้เชี่ยวชาญคอยให้คำแนะนำและดูแลอย่างครบวงจร
           </p>
 
+          {/* เรื่องราวของเรา + คำโปรย + pullquote */}
+          <div
+            className="mx-auto mt-8 max-w-3xl"
+            data-aos="fade-up"
+            data-aos-delay="50"
+          >
+            <p className="text-center text-lg leading-relaxed text-muted">
+              <span className="font-bold text-brand">ThermoManiq</span>{' '}
+              เราไม่ได้เพียงขายโซลาร์เซลล์ แต่เราออกแบบโซลูชันพลังงานที่เหมาะกับคุณ
+            </p>
+
+            <blockquote className="mx-auto mt-6 max-w-2xl rounded-r-xl border-l-4 border-brand bg-brand/5 px-6 py-4">
+              <p className="text-xl font-semibold text-ink sm:text-2xl">
+                “ลงทุนอย่างคุ้มค่า เพื่อการประหยัดในระยะยาว”
+              </p>
+            </blockquote>
+
+            <p className="mt-6 leading-relaxed text-muted">
+              เพราะทุกพื้นที่มีรูปแบบการใช้พลังงานแตกต่างกัน ทีมงานของเราพร้อมให้คำปรึกษา
+              ใส่ใจตั้งแต่การวิเคราะห์ค่าไฟ สำรวจพื้นที่ และออกแบบระบบ
+              ไปจนถึงการติดตั้งและดูแลหลังการขาย เพื่อให้คุณได้รับระบบโซลาร์เซลล์ที่เหมาะสม
+              คุ้มค่า และตอบโจทย์การใช้งานในระยะยาวอย่างแท้จริง
+            </p>
+          </div>
+
           {/* การ์ดจุดเด่นระบบ */}
           <div
             className="mx-auto mt-10 max-w-4xl rounded-2xl border border-gray-100 bg-white p-8 shadow-sm lg:p-10"
@@ -227,10 +252,18 @@ export default function About() {
           </div>
 
           {/* CTA */}
-          <div className="mt-20 flex justify-center" data-aos="fade-up">
-            <Button href="https://line.me/R/ti/p/@288mrska" variant="primary">
-              รับคำปรึกษาฟรี
-            </Button>
+          <div className="mt-20 text-center" data-aos="fade-up">
+            <p className="mx-auto max-w-2xl text-lg leading-relaxed text-muted">
+              ให้เราช่วยออกแบบโซลูชันพลังงานที่เหมาะกับคุณ
+              ติดต่อเราเพื่อรับคำปรึกษาโดยทีมวิศวกรผู้เชี่ยวชาญ
+              และประเมินระบบเบื้องต้น{' '}
+              <span className="font-semibold text-brand">ฟรี ไม่มีค่าใช้จ่ายใด ๆ ทั้งสิ้น</span>
+            </p>
+            <div className="mt-7 flex justify-center">
+              <Button href="https://line.me/R/ti/p/@288mrska" variant="primary">
+                รับคำปรึกษาฟรี
+              </Button>
+            </div>
           </div>
         </div>
       </section>
