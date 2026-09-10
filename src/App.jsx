@@ -7,6 +7,7 @@ import Navbar from './sections/Navbar.jsx';
 import Home from './pages/Home.jsx';
 import About from './pages/About.jsx';
 import Products from './pages/Products.jsx';
+import Works from './pages/Works.jsx';
 
 // ─────────────────────────────────────────────────────────────
 // THERMO MANIQ — เว็บหลายหน้า
@@ -40,6 +41,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/products" element={<Products />} />
+        <Route path="/works" element={<Works />} />
       </Routes>
     </div>
   );

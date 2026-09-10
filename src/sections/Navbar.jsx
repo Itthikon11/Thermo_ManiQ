@@ -14,7 +14,7 @@ const MENU = [
   { label: 'เกี่ยวกับเรา', to: '/about' },
   { label: 'ประโยชน์ของโซล่าเซลล์', href: '/#install' },
   { label: 'สินค้าของเรา', to: '/products' },
-  { label: 'ผลงานของเรา', href: '/#works' },
+  { label: 'ผลงานของเรา', to: '/works' },
 ];
 
 export default function Navbar() {
