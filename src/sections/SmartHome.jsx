@@ -13,10 +13,13 @@ const POINTS = [
 
 export default function SmartHome() {
   return (
-    <section id="about" className="bg-white py-20 lg:py-28">
-      <div className="mx-auto grid max-w-content items-center gap-10 px-5 lg:grid-cols-2 lg:gap-6 lg:px-8">
-        {/* ข้อความซ้าย */}
-        <div data-aos="fade-right">
+    <section id="smart-home" className="overflow-hidden bg-white py-20 lg:py-28">
+      <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-10">
+        {/* ข้อความซ้าย — เว้นระยะซ้ายให้ตรงกับ container 1200px */}
+        <div
+          className="px-5 lg:pl-[max(2rem,calc((100vw-1200px)/2+2rem))] lg:pr-0"
+          data-aos="fade-right"
+        >
           <h2 className="text-4xl font-extrabold leading-tight text-brand sm:text-5xl">
             เปลี่ยนบ้านให้ฉลาด
           </h2>
@@ -58,12 +61,12 @@ export default function SmartHome() {
           </div>
         </div>
 
-        {/* รูปบ้านขวา */}
-        <div className="flex justify-center lg:justify-end" data-aos="fade-left">
+        {/* รูปบ้านขวา — ชิดขอบจอด้านขวา */}
+        <div className="px-5 lg:px-0" data-aos="fade-left">
           <img
             src={houseImg}
             alt="บ้านติดตั้งระบบโซล่าเซลล์และแบตเตอรี่"
-            className="w-full max-w-lg"
+            className="w-full"
           />
         </div>
       </div>

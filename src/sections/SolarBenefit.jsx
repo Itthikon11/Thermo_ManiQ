@@ -27,18 +27,21 @@ const BENEFITS = [
 export default function SolarBenefit() {
   return (
     <section id="install" className="bg-white py-20 lg:py-28">
-      <div className="mx-auto grid max-w-content items-center gap-10 px-5 lg:grid-cols-2 lg:gap-10 lg:px-8">
-        {/* รูปแผงโซล่าซ้าย */}
-        <div className="order-2 flex justify-center lg:order-1" data-aos="fade-right">
+      <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-10">
+        {/* รูปแผงโซล่าซ้าย — ชิดขอบจอด้านซ้าย */}
+        <div className="order-2 px-5 lg:order-1 lg:px-0" data-aos="fade-right">
           <img
             src={solarImg}
             alt="แผงโซล่าเซลล์และแบตเตอรี่กักเก็บพลังงาน"
-            className="w-full max-w-lg"
+            className="w-full"
           />
         </div>
 
-        {/* หัวข้อ + bullet ขวา */}
-        <div className="order-1 lg:order-2" data-aos="fade-left">
+        {/* หัวข้อ + bullet ขวา — เว้นระยะขวาให้ตรงกับ container 1200px */}
+        <div
+          className="order-1 px-5 lg:order-2 lg:pl-0 lg:pr-[max(2rem,calc((100vw-1200px)/2+2rem))]"
+          data-aos="fade-left"
+        >
           <h2 className="text-right text-4xl font-extrabold leading-tight text-brand sm:text-5xl">
             ประโยชน์ของโซล่าเซลล์
           </h2>

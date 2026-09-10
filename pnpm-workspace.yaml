@@ -1,0 +1,6 @@
+# อนุญาตให้ esbuild รัน build script (Vite ต้องใช้ binary ของ esbuild)
+# pnpm 11.6 ใช้รูปแบบ allowBuilds map
+allowBuilds:
+  esbuild: true
+onlyBuiltDependencies:
+  - esbuild
