@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─────────────────────────────────────────────────────────────
+   ชั้น base เฉพาะที่ Tailwind utility ทำไม่สะดวก (ฟอนต์/สกรอลล์)
+   นอกนั้น styling ทั้งหมดอยู่ในคลาส Tailwind บน JSX
+   ───────────────────────────────────────────────────────────── */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply font-sans text-ink antialiased;
+  }
+}
