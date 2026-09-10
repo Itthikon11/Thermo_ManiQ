@@ -15,9 +15,13 @@ const VARIANT = {
 
 export default function Button({ children, href = '#', variant = 'primary', className = '' }) {
   const tone = VARIANT[variant] ?? VARIANT.primary;
+  // ลิงก์ภายนอก (http/https) → เปิดแท็บใหม่ + rel ปลอดภัย
+  const external = /^https?:\/\//.test(href);
   return (
     <a
       href={href}
+      target={external ? '_blank' : undefined}
+      rel={external ? 'noopener noreferrer' : undefined}
       className={`inline-flex items-center gap-2 rounded-full px-7 py-3 text-base font-semibold transition-colors ${tone} ${className}`}
     >
       {children}

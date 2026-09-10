@@ -52,10 +52,10 @@ export default function SmartHome() {
           </ul>
 
           <div className="mt-10 flex flex-wrap gap-4">
-            <Button href="#products" variant="primary">
+            <Button href="/products" variant="primary">
               ชมสินค้าเพิ่มเติม
             </Button>
-            <Button href="#contact" variant="outline">
+            <Button href="https://line.me/R/ti/p/@288mrska" variant="outline">
               รับคำปรึกษาฟรี
             </Button>
           </div>

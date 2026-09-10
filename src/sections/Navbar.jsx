@@ -12,8 +12,8 @@ import logo from '../assets/images/logo.png';
 const MENU = [
   { label: 'หน้าแรก', to: '/' },
   { label: 'เกี่ยวกับเรา', to: '/about' },
-  { label: 'รับติดตั้งโซล่าเซลล์', href: '/#install' },
-  { label: 'สินค้าของเรา', href: '/#products' },
+  { label: 'ประโยชน์ของโซล่าเซลล์', href: '/#install' },
+  { label: 'สินค้าของเรา', to: '/products' },
   { label: 'ผลงานของเรา', href: '/#works' },
 ];
 
@@ -29,7 +29,11 @@ export default function Navbar() {
         key={m.label}
         to={m.to}
         end={m.to === '/'}
-        onClick={onClick}
+        onClick={(e) => {
+          // อยู่หน้าแรกอยู่แล้ว → เลื่อนสไลด์ขึ้นบนสุดแบบนุ่มนวล
+          if (m.to === '/') window.scrollTo({ top: 0, behavior: 'smooth' });
+          onClick?.(e);
+        }}
         className={({ isActive }) =>
           `${base} ${extra} ${isActive ? 'text-brand' : 'text-ink/80'}`
         }
@@ -60,7 +64,7 @@ export default function Navbar() {
         </nav>
 
         <div className="hidden lg:block">
-          <Button href="/#contact" className="px-6 py-2.5">
+          <Button href="https://line.me/R/ti/p/@288mrska" className="px-6 py-2.5">
             ติดต่อเรา
           </Button>
         </div>
@@ -83,7 +87,7 @@ export default function Navbar() {
           {MENU.map((m) =>
             renderLink(m, () => setOpen(false), 'rounded-lg px-3 py-2 hover:bg-gray-100'),
           )}
-          <Button href="/#contact" className="mt-2 justify-center">
+          <Button href="https://line.me/R/ti/p/@288mrska" className="mt-2 justify-center">
             ติดต่อเรา
           </Button>
         </nav>

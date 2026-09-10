@@ -34,10 +34,10 @@ export default function Hero() {
             data-aos="fade-up"
             data-aos-delay="150"
           >
-            <Button href="#products" variant="primary">
+            <Button href="/products" variant="primary">
               ชมสินค้าเพิ่มเติม
             </Button>
-            <Button href="#contact" variant="ghost">
+            <Button href="https://line.me/R/ti/p/@288mrska" variant="ghost">
               รับคำปรึกษาฟรี
             </Button>
           </div>

@@ -58,7 +58,7 @@ export default function SolarBenefit() {
           </ul>
 
           <div className="mt-10">
-            <Button href="#contact" variant="outline">
+            <Button href="https://line.me/R/ti/p/@288mrska" variant="outline">
               รับคำปรึกษาฟรี
             </Button>
           </div>

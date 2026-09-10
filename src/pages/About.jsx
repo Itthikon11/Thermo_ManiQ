@@ -228,7 +228,7 @@ export default function About() {
 
           {/* CTA */}
           <div className="mt-20 flex justify-center" data-aos="fade-up">
-            <Button href="/#contact" variant="primary">
+            <Button href="https://line.me/R/ti/p/@288mrska" variant="primary">
               รับคำปรึกษาฟรี
             </Button>
           </div>
