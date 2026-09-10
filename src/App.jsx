@@ -17,7 +17,13 @@ export default function App() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    AOS.init({ duration: 700, once: true, easing: 'ease-out-cubic' });
+    // once:false → เล่นซ้ำทุกครั้งที่เข้า viewport · mirror:true → สไลด์ออกตอนเลื่อนผ่าน
+    AOS.init({
+      duration: 700,
+      once: false,
+      mirror: true,
+      easing: 'ease-out-cubic',
+    });
   }, []);
 
   // เปลี่ยนหน้าแล้วเลื่อนขึ้นบนสุด + ให้ AOS สแกนอิลิเมนต์ใหม่

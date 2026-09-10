@@ -18,7 +18,10 @@ export default function Hero() {
 
       <div className="relative mx-auto w-full max-w-content px-5 lg:px-8">
         <div className="max-w-2xl">
-          <h1 className="text-5xl font-extrabold leading-[1.05] text-white sm:text-6xl lg:text-7xl">
+          <h1
+            className="text-5xl font-extrabold leading-[1.05] text-white sm:text-6xl lg:text-7xl"
+            data-aos="fade-right"
+          >
             พลังงานอัจฉริยะ
             <br />
             บริหารเป็น
@@ -26,7 +29,11 @@ export default function Hero() {
             <span className="text-brand">TOTAL ENERGY</span>
           </h1>
 
-          <div className="mt-10 flex flex-wrap gap-4">
+          <div
+            className="mt-10 flex flex-wrap gap-4"
+            data-aos="fade-up"
+            data-aos-delay="150"
+          >
             <Button href="#products" variant="primary">
               ชมสินค้าเพิ่มเติม
             </Button>
