@@ -8,6 +8,8 @@ import Home from './pages/Home.jsx';
 import About from './pages/About.jsx';
 import Products from './pages/Products.jsx';
 import Works from './pages/Works.jsx';
+import AdminLogin from './pages/admin/Login.jsx';
+import AdminDashboard from './pages/admin/Dashboard.jsx';
 
 // ─────────────────────────────────────────────────────────────
 // THERMO MANIQ — เว็บหลายหน้า
@@ -17,6 +19,9 @@ import Works from './pages/Works.jsx';
 // ─────────────────────────────────────────────────────────────
 export default function App() {
   const { pathname } = useLocation();
+
+  // โซนแอดมิน (/admin, /admin/login) มีเลย์เอาต์ของตัวเอง → ไม่โชว์ Navbar เว็บหลัก
+  const isAdmin = pathname.startsWith('/admin');
 
   useEffect(() => {
     // once:false → เล่นซ้ำทุกครั้งที่เข้า viewport · mirror:true → สไลด์ออกตอนเลื่อนผ่าน
@@ -36,12 +41,16 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-white">
-      <Navbar />
+      {!isAdmin && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/products" element={<Products />} />
         <Route path="/works" element={<Works />} />
+
+        {/* โซนผู้ดูแลระบบ */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
     </div>
   );
