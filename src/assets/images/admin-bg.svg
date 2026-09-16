@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice">
+  <!-- ─────────────────────────────────────────────────────────────
+       พื้นหลังหน้า Login แอดมิน — THERMO MANIQ
+       ดำเทคโน + กริดแผงโซลาร์เพอร์สเปคทีฟ + แสงส้มพลังงาน
+       ───────────────────────────────────────────────────────────── -->
+  <defs>
+    <!-- ไล่สีพื้นหลัก: ดำอมน้ำตาลเข้ม -->
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#14100d"/>
+      <stop offset="0.55" stop-color="#1a1512"/>
+      <stop offset="1" stop-color="#2a2018"/>
+    </linearGradient>
+
+    <!-- แสงส้มเรือง (สำหรับ orb และ glow) -->
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#F5821F" stop-opacity="0.55"/>
+      <stop offset="0.4" stop-color="#F5821F" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#F5821F" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- กริดสี่เหลี่ยม (บลูพรินต์) -->
+    <pattern id="grid" width="46" height="46" patternUnits="userSpaceOnUse">
+      <path d="M46 0H0V46" fill="none" stroke="#F5821F" stroke-opacity="0.06" stroke-width="1"/>
+    </pattern>
+
+    <!-- ไล่จางกริดที่ขอบ ให้เนียน -->
+    <radialGradient id="gridMask" cx="0.5" cy="0.4" r="0.75">
+      <stop offset="0" stop-color="#fff" stop-opacity="1"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="gridFade">
+      <rect width="1600" height="1000" fill="url(#gridMask)"/>
+    </mask>
+
+    <!-- ฟิลเตอร์เรืองแสงสำหรับเส้นแผงโซลาร์ -->
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="4"/>
+    </filter>
+
+    <!-- ไล่สีเส้นขอบแผงโซลาร์ -->
+    <linearGradient id="edge" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#F5821F" stop-opacity="0.15"/>
+      <stop offset="0.5" stop-color="#F5821F" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#ffb15e" stop-opacity="0.7"/>
+    </linearGradient>
+  </defs>
+
+  <!-- พื้นฐาน -->
+  <rect width="1600" height="1000" fill="url(#bg)"/>
+
+  <!-- กริดบลูพรินต์ (จางที่ขอบ) -->
+  <rect width="1600" height="1000" fill="url(#grid)" mask="url(#gridFade)"/>
+
+  <!-- แสงส้มก้อนใหญ่ มุมบนขวา (เหมือนดวงอาทิตย์พลังงาน) -->
+  <circle cx="1300" cy="180" r="520" fill="url(#glow)"/>
+  <!-- แสงส้มก้อนล่างซ้าย เสริมมิติ -->
+  <circle cx="180" cy="880" r="420" fill="url(#glow)" opacity="0.6"/>
+
+  <!-- ─── แผงโซลาร์เพอร์สเปคทีฟ มุมล่างขวา ───
+       เส้นเรืองส้มไล่เข้าหาจุดรวมสายตา ให้ความรู้สึกฟาร์มโซลาร์ -->
+  <g filter="url(#soft)" opacity="0.85">
+    <!-- เส้นแนวลึก (converging) -->
+    <path d="M760 1000 L1120 560" stroke="url(#edge)" stroke-width="2.5" fill="none"/>
+    <path d="M980 1000 L1200 560" stroke="url(#edge)" stroke-width="2.5" fill="none"/>
+    <path d="M1200 1000 L1280 560" stroke="url(#edge)" stroke-width="2.5" fill="none"/>
+    <path d="M1420 1000 L1360 560" stroke="url(#edge)" stroke-width="2.5" fill="none"/>
+    <path d="M1600 940 L1440 560" stroke="url(#edge)" stroke-width="2.5" fill="none"/>
+    <!-- เส้นแนวขวาง (rows) -->
+    <path d="M1090 620 L1470 620" stroke="url(#edge)" stroke-width="2" fill="none"/>
+    <path d="M1010 720 L1520 720" stroke="url(#edge)" stroke-width="2.2" fill="none"/>
+    <path d="M900 840 L1590 840" stroke="url(#edge)" stroke-width="2.6" fill="none"/>
+    <path d="M800 980 L1600 980" stroke="url(#edge)" stroke-width="3" fill="none"/>
+  </g>
+
+  <!-- จุดพลังงานลอย (โหนดวงจร) -->
+  <g fill="#F5821F">
+    <circle cx="1120" cy="560" r="3" opacity="0.9"/>
+    <circle cx="300" cy="240" r="2.5" opacity="0.5"/>
+    <circle cx="560" cy="160" r="2" opacity="0.4"/>
+    <circle cx="1440" cy="360" r="2.5" opacity="0.6"/>
+    <circle cx="220" cy="520" r="2" opacity="0.4"/>
+  </g>
+
+  <!-- เส้นวงจรบางๆ มุมบนซ้าย -->
+  <g stroke="#F5821F" stroke-opacity="0.18" stroke-width="1.5" fill="none">
+    <path d="M0 300 H180 L240 240 H360"/>
+    <path d="M0 360 H140 L200 420 H300"/>
+    <circle cx="360" cy="240" r="4" fill="#F5821F" fill-opacity="0.4" stroke="none"/>
+    <circle cx="300" cy="420" r="4" fill="#F5821F" fill-opacity="0.3" stroke="none"/>
+  </g>
+</svg>
