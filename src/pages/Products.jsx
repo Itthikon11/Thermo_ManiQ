@@ -1,89 +1,14 @@
+import { useEffect, useState } from 'react';
 import Button from '../components/Button.jsx';
+import Lightbox from '../components/Lightbox.jsx';
+import MagnifierIcon from '../components/MagnifierIcon.jsx';
+import SearchBar from '../components/SearchBar.jsx';
+import { getProducts, resolveImg } from '../lib/api.js';
 
 // ─────────────────────────────────────────────────────────────
 // หน้าสินค้าของเรา (route /products) — แกลเลอรีสินค้า Growatt
-// วางไฟล์รูปไว้ที่ public/products/ ตามชื่อในฟิลด์ img
+// ดึงข้อมูลจาก backend (ตาราง products) · แอดมินเพิ่ม/ลบได้ที่ /admin
 // ─────────────────────────────────────────────────────────────
-const PRODUCTS = [
-  {
-    title: 'Growatt MIN',
-    tagline: 'On Grid Inverter · 3–5kW · 1 Phase',
-    category: 'On Grid',
-    img: '/products/growatt-min-ongrid.jpg',
-  },
-  {
-    title: 'Growatt MOD',
-    tagline: 'On Grid Inverter · 5–10kW · 3 Phase',
-    category: 'On Grid',
-    img: '/products/growatt-mod-ongrid.jpg',
-  },
-  {
-    title: 'Growatt MID 20kW',
-    tagline: 'On Grid Inverter · 20kW · 3 Phase',
-    category: 'On Grid',
-    img: '/products/growatt-mid-20kw.jpg',
-  },
-  {
-    title: 'Growatt MID 40kW',
-    tagline: 'On Grid Inverter · 40kW · 3 Phase',
-    category: 'On Grid',
-    img: '/products/growatt-mid-40kw.jpg',
-  },
-  {
-    title: 'Growatt MID 60kW',
-    tagline: 'On Grid Inverter · 60kW · 3 Phase',
-    category: 'On Grid',
-    img: '/products/growatt-mid-60kw.jpg',
-  },
-  {
-    title: 'Growatt MID 80kW',
-    tagline: 'On Grid Inverter · 80kW · 3 Phase',
-    category: 'On Grid',
-    img: '/products/growatt-mid-80kw.jpg',
-  },
-  {
-    title: 'Growatt MID 125kW',
-    tagline: 'On Grid Inverter · 125kW · 3 Phase',
-    category: 'On Grid',
-    img: '/products/growatt-mid-125kw.jpg',
-  },
-  {
-    title: 'Growatt SP',
-    tagline: 'Hybrid Inverter · 6–10kW · 1 Phase',
-    category: 'Hybrid',
-    img: '/products/growatt-sp-hybrid.jpg',
-  },
-  {
-    title: 'Growatt WIT',
-    tagline: 'Hybrid Inverter · 10–15kW · 3 Phase',
-    category: 'Hybrid',
-    img: '/products/growatt-wit-hybrid.jpg',
-  },
-  {
-    title: 'Growatt SPF',
-    tagline: 'Off Grid Inverter · 3–6kW · ใช้แบตเตอรี่ได้ทุกยี่ห้อ',
-    category: 'Off Grid',
-    img: '/products/growatt-spf-offgrid.jpg',
-  },
-  {
-    title: 'Growatt NEO',
-    tagline: 'Micro Inverter · 2.5kW · 1 Phase',
-    category: 'Micro',
-    img: '/products/growatt-neo-micro.jpg',
-  },
-  {
-    title: 'HOPE Battery',
-    tagline: 'แบตเตอรี่ลิเธียม · 5.0L / 16.0L',
-    category: 'Battery',
-    img: '/products/hope-battery.jpg',
-  },
-  {
-    title: 'Growatt Module',
-    tagline: 'ShineMaster · WiFi · Smart Energy Manager',
-    category: 'Module',
-    img: '/products/growatt-module.jpg',
-  },
-];
 
 // ถ้ารูปโหลดไม่ได้ → แสดง placeholder บอกชื่อไฟล์ที่ต้องวาง
 function handleImgError(e, file) {
@@ -96,6 +21,33 @@ function handleImgError(e, file) {
 }
 
 export default function Products() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [preview, setPreview] = useState(null); // รูปที่กำลังดูใหญ่ { src, title }
+  const [query, setQuery] = useState(''); // คำค้นหา
+
+  // กรองตามคำค้นหา (ชื่อ · รายละเอียด · หมวดหมู่)
+  const q = query.trim().toLowerCase();
+  const filtered = q
+    ? products.filter((p) =>
+        [p.title, p.tagline, p.category].some((v) => (v || '').toLowerCase().includes(q)),
+      )
+    : products;
+
+  useEffect(() => {
+    getProducts()
+      .then(setProducts)
+      .catch((err) =>
+        setError(
+          err.message === 'Failed to fetch'
+            ? 'เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ (ยังไม่ได้เปิด backend)'
+            : err.message,
+        ),
+      )
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <main>
       {/* banner หัวเรื่อง */}
@@ -115,35 +67,66 @@ export default function Products() {
       {/* แกลเลอรีสินค้า */}
       <section className="bg-gradient-to-b from-gray-50 to-white py-16 lg:py-24">
         <div className="mx-auto max-w-content px-5 lg:px-8">
+          {/* สถานะโหลด / error / ว่าง */}
+          {loading && <p className="text-center text-muted">กำลังโหลดสินค้า…</p>}
+          {error && !loading && (
+            <p className="mx-auto max-w-md rounded-lg bg-red-50 px-4 py-3 text-center text-sm text-red-600">
+              {error}
+            </p>
+          )}
+          {!loading && !error && products.length === 0 && (
+            <p className="text-center text-muted">ยังไม่มีสินค้าในระบบ</p>
+          )}
+
+          {/* หัวข้อรวม + ช่องค้นหา */}
+          {!loading && !error && products.length > 0 && (
+            <div className="mb-8">
+              <h2 className="text-xl font-bold text-ink">
+                สินค้าทั้งหมด{' '}
+                <span className="font-semibold text-muted">({filtered.length})</span>
+              </h2>
+              <div className="mt-4 max-w-xl">
+                <SearchBar value={query} onChange={setQuery} placeholder="ค้นหาสินค้า..." />
+              </div>
+            </div>
+          )}
+
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {PRODUCTS.map((p, i) => (
+            {filtered.map((p, i) => (
               <div
-                key={p.title}
+                key={p.id}
                 className="flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-shadow hover:shadow-lg"
                 data-aos="fade-up"
-                data-aos-delay={i * 100}
+                data-aos-delay={(i % 3) * 100}
               >
-                {/* รูปโพสเตอร์ */}
+                {/* รูปโพสเตอร์ — กดเพื่อดูรูปใหญ่ */}
                 <div className="relative bg-gray-50">
-                  <img
-                    src={p.img}
-                    alt={`โปรโมชัน ${p.title}`}
-                    loading="lazy"
-                    className="block w-full"
-                    onError={(e) => handleImgError(e, p.img)}
-                  />
-                  {/* placeholder เมื่อยังไม่มีไฟล์รูป */}
-                  <div
-                    className="hidden aspect-video w-full flex-col items-center justify-center gap-2 bg-gray-100 p-6 text-center text-sm text-muted"
-                    style={{ display: 'none' }}
+                  <button
+                    type="button"
+                    onClick={() => setPreview({ src: resolveImg(p.img), title: p.title })}
+                    title="กดเพื่อดูรูปใหญ่"
+                    className="group relative block w-full cursor-zoom-in"
                   >
-                    <span className="text-3xl">🖼️</span>
-                    <span className="font-semibold text-ink">{p.title}</span>
-                    <span>วางไฟล์รูปที่</span>
-                    <code className="rounded bg-white px-2 py-1 text-xs text-brand">
-                      public{p.img}
-                    </code>
-                  </div>
+                    <img
+                      src={resolveImg(p.img)}
+                      alt={`โปรโมชัน ${p.title}`}
+                      loading="lazy"
+                      className="block w-full"
+                      onError={(e) => handleImgError(e, p.img)}
+                    />
+                    {/* placeholder เมื่อยังไม่มีไฟล์รูป */}
+                    <div
+                      className="hidden aspect-video w-full flex-col items-center justify-center gap-2 bg-gray-100 p-6 text-center text-sm text-muted"
+                      style={{ display: 'none' }}
+                    >
+                      <span className="text-3xl">🖼️</span>
+                      <span className="font-semibold text-ink">{p.title}</span>
+                    </div>
+                    {/* ไอคอนแว่นขยายตอนโฮเวอร์ */}
+                    <span className="pointer-events-none absolute inset-0 grid place-items-center bg-black/0 text-transparent transition group-hover:bg-black/25 group-hover:text-white">
+                      <MagnifierIcon className="h-10 w-10" />
+                    </span>
+                  </button>
                 </div>
 
                 {/* รายละเอียด */}
@@ -165,6 +148,11 @@ export default function Products() {
             ))}
           </div>
 
+          {/* ไม่พบผลลัพธ์จากการค้นหา */}
+          {!loading && !error && products.length > 0 && filtered.length === 0 && (
+            <p className="text-center text-muted">ไม่พบสินค้าที่ตรงกับ “{query}”</p>
+          )}
+
           {/* ติดต่อ */}
           <div className="mt-14 text-center text-muted" data-aos="fade-up">
             <p>
@@ -175,6 +163,9 @@ export default function Products() {
           </div>
         </div>
       </section>
+
+      {/* ดูรูปใหญ่ */}
+      <Lightbox item={preview} onClose={() => setPreview(null)} />
     </main>
   );
 }

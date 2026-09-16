@@ -1,48 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import Button from '../components/Button.jsx';
+import MagnifierIcon from '../components/MagnifierIcon.jsx';
+import SearchBar from '../components/SearchBar.jsx';
+import { getWorks, resolveImg } from '../lib/api.js';
 
 // ─────────────────────────────────────────────────────────────
 // หน้าผลงานของเรา (route /works) — แกลเลอรีงานติดตั้งจริง
-// รูปวางไว้ที่ public/works/ ตามชื่อไฟล์ในฟิลด์ img
+// ดึงข้อมูลจาก backend (ตาราง works) · แอดมินเพิ่ม/ลบได้ที่ /admin
 // คลิกรูป → เปิดดูภาพใหญ่ (lightbox) · Esc / คลิกพื้นหลัง = ปิด
 // ─────────────────────────────────────────────────────────────
-const WORKS = [
-  { title: 'บ้านดอนท้าว', img: '/works/work-05.jpg' },
-  { title: 'เทศบาลตำบลหัวทะเล', img: '/works/work-06.png' },
-  { title: 'บ้านท่ากระท่ม', img: '/works/work-07.png' },
-  { title: 'บ้านบะใหญ่', img: '/works/work-08.png' },
-  { title: 'บ้านบุกระโทก', img: '/works/work-09.png' },
-  { title: 'บ้านคุณทิ', img: '/works/work-10.jpg' },
-  { title: 'บ้านคุณพริษ', img: '/works/work-11.png' },
-  { title: 'บ้านคุณเท็น', img: '/works/work-12.png' },
-  { title: 'บ้านงิ้ว', img: '/works/work-13.jpg' },
-  { title: 'บ้าน ผอ.หมวย', img: '/works/work-14.png' },
-  { title: 'บ้านพระ', img: '/works/work-15.png' },
-  { title: 'บ้านพี่แม็ก', img: '/works/work-16.png' },
-  { title: 'บ้านพี่โจ้', img: '/works/work-17.png' },
-  { title: 'บ้านอาขวัญ', img: '/works/work-18.png' },
-  { title: 'บ้านเหล่า', img: '/works/work-19.png' },
-  { title: 'บ้านใหม่', img: '/works/work-20.png' },
-  { title: 'บ้านไพ', img: '/works/work-21.jpg' },
-  { title: 'บ้านปลายราง', img: '/works/work-22.png' },
-  { title: 'บ้านมะรุม', img: '/works/work-23.png' },
-  { title: 'โรงงานชนะชัยฯ', img: '/works/work-24.png' },
-  { title: 'บ้านระเริง', img: '/works/work-25.png' },
-  { title: 'บ้านลำนางแก้ว', img: '/works/work-26.png' },
-  { title: 'บ้านลุงเขว้า', img: '/works/work-27.png' },
-  { title: 'บ้านสุขัง', img: '/works/work-28.png' },
-  { title: 'บ้านหนองน้ำใส', img: '/works/work-29.jpg' },
-  { title: 'บ้านหนองพลอง', img: '/works/work-30.jpg' },
-  { title: 'บ้านหนองหัวแรด', img: '/works/work-31.png' },
-  { title: 'บ้านหลุมข้าว', img: '/works/work-32.jpg' },
-  { title: 'บ้านหัวทำนบ', img: '/works/work-33.jpg' },
-  { title: 'บ้านเขาฉกรรจ์', img: '/works/work-34.png' },
-  { title: 'บ้านเมืองเก่า', img: '/works/work-35.png' },
-  { title: 'บ้านเอื้อมน่าน', img: '/works/work-36.png' },
-  { title: 'บ้านโค้งยาง', img: '/works/work-37.png' },
-  { title: 'บ้านโตนด', img: '/works/work-38.png' },
-  { title: 'บ้านโนนสำราญ', img: '/works/work-39.png' },
-];
 
 // ถ้ารูปโหลดไม่ได้ → แสดง placeholder บอกชื่อไฟล์ที่ต้องวาง
 function handleImgError(e, file) {
@@ -55,17 +21,44 @@ function handleImgError(e, file) {
 }
 
 export default function Works() {
-  const [active, setActive] = useState(null); // index ของรูปที่เปิดดูใหญ่ · null = ปิด
+  const [works, setWorks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [active, setActive] = useState(null); // index (ในลิสต์ที่กรองแล้ว) ของรูปที่เปิดดูใหญ่ · null = ปิด
+  const [query, setQuery] = useState(''); // คำค้นหา
+
+  // กรองตามชื่อผลงาน — lightbox ก็เลื่อนเฉพาะในผลลัพธ์ที่กรองแล้ว
+  const q = query.trim().toLowerCase();
+  const filtered = q ? works.filter((w) => (w.title || '').toLowerCase().includes(q)) : works;
+
+  useEffect(() => {
+    getWorks()
+      .then(setWorks)
+      .catch((err) =>
+        setError(
+          err.message === 'Failed to fetch'
+            ? 'เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ (ยังไม่ได้เปิด backend)'
+            : err.message,
+        ),
+      )
+      .finally(() => setLoading(false));
+  }, []);
 
   const close = useCallback(() => setActive(null), []);
   const prev = useCallback(
-    () => setActive((i) => (i === null ? i : (i - 1 + WORKS.length) % WORKS.length)),
-    [],
+    () => setActive((i) => (i === null ? i : (i - 1 + filtered.length) % filtered.length)),
+    [filtered.length],
   );
   const next = useCallback(
-    () => setActive((i) => (i === null ? i : (i + 1) % WORKS.length)),
-    [],
+    () => setActive((i) => (i === null ? i : (i + 1) % filtered.length)),
+    [filtered.length],
   );
+
+  // เปลี่ยนคำค้นหา → ปิด lightbox กัน index ค้าง
+  function handleQuery(v) {
+    setActive(null);
+    setQuery(v);
+  }
 
   // คีย์ลัดตอนเปิด lightbox: Esc ปิด · ←/→ เลื่อนรูป · ล็อกสกอลล์พื้นหลัง
   useEffect(() => {
@@ -93,7 +86,7 @@ export default function Works() {
             ผลงานของเรา
           </h1>
           <p className="mt-3 text-white/70">
-            งานติดตั้งระบบโซล่าเซลล์จริง กว่า {WORKS.length} หลังคาเรือน บ้าน · เทศบาล · โรงงาน
+            งานติดตั้งระบบโซล่าเซลล์จริง กว่า {works.length} หลังคาเรือน บ้าน · เทศบาล · โรงงาน
           </p>
           <div className="mt-4 h-1 w-20 rounded-full bg-brand" />
         </div>
@@ -102,10 +95,34 @@ export default function Works() {
       {/* แกลเลอรีผลงาน */}
       <section className="bg-gradient-to-b from-gray-50 to-white py-16 lg:py-24">
         <div className="mx-auto max-w-content px-5 lg:px-8">
+          {/* สถานะโหลด / error / ว่าง */}
+          {loading && <p className="text-center text-muted">กำลังโหลดผลงาน…</p>}
+          {error && !loading && (
+            <p className="mx-auto max-w-md rounded-lg bg-red-50 px-4 py-3 text-center text-sm text-red-600">
+              {error}
+            </p>
+          )}
+          {!loading && !error && works.length === 0 && (
+            <p className="text-center text-muted">ยังไม่มีผลงานในระบบ</p>
+          )}
+
+          {/* หัวข้อรวม + ช่องค้นหา */}
+          {!loading && !error && works.length > 0 && (
+            <div className="mb-8">
+              <h2 className="text-xl font-bold text-ink">
+                ผลงานทั้งหมด{' '}
+                <span className="font-semibold text-muted">({filtered.length})</span>
+              </h2>
+              <div className="mt-4 max-w-xl">
+                <SearchBar value={query} onChange={handleQuery} placeholder="ค้นหาผลงาน..." />
+              </div>
+            </div>
+          )}
+
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {WORKS.map((w, i) => (
+            {filtered.map((w, i) => (
               <button
-                key={w.img}
+                key={w.id}
                 type="button"
                 onClick={() => setActive(i)}
                 className="group relative block overflow-hidden rounded-2xl border border-gray-100 bg-white text-left shadow-sm transition-shadow hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-brand"
@@ -115,7 +132,7 @@ export default function Works() {
                 {/* รูปงานติดตั้ง (สัดส่วน 4:3 ครอบเต็มกรอบ) */}
                 <div className="relative aspect-[4/3] bg-gray-100">
                   <img
-                    src={w.img}
+                    src={resolveImg(w.img)}
                     alt={`ผลงานติดตั้ง ${w.title}`}
                     loading="lazy"
                     className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -128,9 +145,6 @@ export default function Works() {
                   >
                     <span className="text-3xl">🖼️</span>
                     <span className="font-semibold text-ink">{w.title}</span>
-                    <code className="rounded bg-white px-2 py-1 text-xs text-brand">
-                      public{w.img}
-                    </code>
                   </div>
 
                   {/* แถบชื่อไล่เฉดล่าง */}
@@ -141,12 +155,17 @@ export default function Works() {
                   </div>
                   {/* ไอคอนแว่นขยายตอน hover */}
                   <span className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full bg-white/90 text-brand opacity-0 shadow transition-opacity group-hover:opacity-100">
-                    ⤢
+                    <MagnifierIcon className="h-5 w-5" />
                   </span>
                 </div>
               </button>
             ))}
           </div>
+
+          {/* ไม่พบผลลัพธ์จากการค้นหา */}
+          {!loading && !error && works.length > 0 && filtered.length === 0 && (
+            <p className="text-center text-muted">ไม่พบผลงานที่ตรงกับ “{query}”</p>
+          )}
 
           {/* CTA ปิดท้าย */}
           <div className="mt-14 text-center" data-aos="fade-up">
@@ -205,14 +224,14 @@ export default function Works() {
             onClick={(e) => e.stopPropagation()}
           >
             <img
-              src={WORKS[active].img}
-              alt={WORKS[active].title}
+              src={resolveImg(filtered[active].img)}
+              alt={filtered[active].title}
               className="mx-auto max-h-[78vh] w-auto rounded-lg object-contain shadow-2xl"
             />
             <figcaption className="mt-4 text-center text-white">
-              <span className="font-semibold">{WORKS[active].title}</span>
+              <span className="font-semibold">{filtered[active].title}</span>
               <span className="ml-2 text-white/50">
-                {active + 1} / {WORKS.length}
+                {active + 1} / {filtered.length}
               </span>
             </figcaption>
           </figure>

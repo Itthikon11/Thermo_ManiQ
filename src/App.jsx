@@ -6,6 +6,7 @@ import 'aos/dist/aos.css';
 import Navbar from './sections/Navbar.jsx';
 import Home from './pages/Home.jsx';
 import About from './pages/About.jsx';
+import Benefits from './pages/Benefits.jsx';
 import Products from './pages/Products.jsx';
 import Works from './pages/Works.jsx';
 import AdminLogin from './pages/admin/Login.jsx';
@@ -45,6 +46,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
+        <Route path="/benefits" element={<Benefits />} />
         <Route path="/products" element={<Products />} />
         <Route path="/works" element={<Works />} />
 
