@@ -1,0 +1,3 @@
+# SPA fallback — ให้ทุก path เสิร์ฟ index.html แล้วปล่อยให้ React Router จัดการ
+# แก้ 404 ตอนเข้า/รีเฟรช URL ลึก ๆ ตรง ๆ เช่น /admin/login, /products
+/*    /index.html   200
