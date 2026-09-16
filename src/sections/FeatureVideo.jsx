@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getVideos, resolveImg } from '../lib/api.js';
 
 // ─────────────────────────────────────────────────────────────
@@ -41,6 +41,10 @@ function toEmbed(url) {
 
 export default function FeatureVideo() {
   const [videos, setVideos] = useState([]);
+  const [index, setIndex] = useState(0); // วิดีโอที่กำลังเล่นอยู่ (เล่นไล่ทีละคลิป)
+  const [inView, setInView] = useState(false); // เข้ามาอยู่ในจอแล้วหรือยัง
+  const boxRef = useRef(null);
+  const videoRef = useRef(null);
 
   useEffect(() => {
     getVideos()
@@ -48,26 +52,69 @@ export default function FeatureVideo() {
       .catch(() => {}); // เงียบไว้ ถ้า backend ไม่พร้อมก็โชว์ placeholder
   }, []);
 
-  const video = videos[0];
-  const embed = video ? toEmbed(video.url) : null;
+  // เริ่มเล่นเองเมื่อเลื่อนมาถึง (IntersectionObserver)
+  useEffect(() => {
+    const el = boxRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { threshold: 0.25, rootMargin: '0px 0px -10% 0px' },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  // สั่งเล่น/หยุด ตามสถานะการอยู่ในจอ + เมื่อเปลี่ยนคลิป
+  //   พยายามเล่นแบบมีเสียงก่อน ถ้าเบราว์เซอร์บล็อก (ยังไม่เคยคลิกหน้าเว็บ) ค่อยถอยมาเล่นแบบเงียบ
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    if (!inView) {
+      v.pause();
+      return;
+    }
+    v.muted = false;
+    v.play().catch(() => {
+      v.muted = true;
+      v.play().catch(() => {});
+    });
+  }, [inView, index, videos]);
+
+  const embeds = videos.map((vd) => ({ ...vd, embed: toEmbed(vd.url) }));
+  const current = embeds[index];
+  const embed = current?.embed;
+
+  // จบคลิป → เล่นคลิปถัดไป (วนกลับไปคลิปแรกเมื่อครบ)
+  const handleEnded = () => {
+    setIndex((i) => (embeds.length ? (i + 1) % embeds.length : 0));
+  };
 
   return (
     <section className="bg-white py-16 lg:py-24">
       <div className="mx-auto grid max-w-content items-center gap-10 px-5 lg:grid-cols-2 lg:px-8">
         {/* วิดีโอ */}
         <div data-aos="fade-right">
-          <div className="aspect-video overflow-hidden rounded-2xl bg-ink shadow-lg">
+          <div ref={boxRef} className="aspect-video overflow-hidden rounded-2xl bg-ink shadow-lg">
             {embed?.type === 'iframe' && (
               <iframe
-                src={embed.src}
-                title={video.title || 'วิดีโอแนะนำ'}
+                key={current.id ?? index}
+                src={inView ? `${embed.src}${embed.src.includes('?') ? '&' : '?'}autoplay=1&mute=1` : embed.src}
+                title={current.title || 'วิดีโอแนะนำ'}
                 className="h-full w-full"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               />
             )}
             {embed?.type === 'file' && (
-              <video src={embed.src} controls className="h-full w-full object-contain" />
+              <video
+                key={current.id ?? index}
+                ref={videoRef}
+                src={embed.src}
+                playsInline
+                controls
+                onEnded={handleEnded}
+                className="h-full w-full object-contain"
+              />
             )}
             {!embed && (
               <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-white/50">
@@ -76,8 +123,8 @@ export default function FeatureVideo() {
               </div>
             )}
           </div>
-          {video?.title && (
-            <p className="mt-3 text-center text-sm font-medium text-muted">{video.title}</p>
+          {current?.title && (
+            <p className="mt-3 text-center text-sm font-medium text-muted">{current.title}</p>
           )}
         </div>
 
