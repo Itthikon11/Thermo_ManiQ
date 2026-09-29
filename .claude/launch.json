@@ -4,9 +4,15 @@
     {
       "name": "thermo-dev",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": ["--dir", "thermo-client", "run", "dev"],
       "port": 5180,
       "autoPort": true
+    },
+    {
+      "name": "thermo-api",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "thermo-api", "run", "dev"],
+      "port": 3001
     }
   ]
 }
